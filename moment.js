@@ -5,17 +5,19 @@
  * component builder for Node.js, Grunt.js and Yeoman.
  * http://assemble.io
  *
- * Copyright (c) 2014, Brian Woodward, Jon Schlinkert
+ * Copyright (c) 2013, Upstage
  * Licensed under the MIT license.
  */
 
 /*jshint node:true */
-'use strict';
-module.exports.register = function (Handlebars, options, params) {
+module.exports.register = function(Handlebars, options) {
+  var helpers = {};
   var moment  = require('moment');
   var _       = require('lodash');
 
-  Handlebars.registerHelper('moment', function (context, block) {
+  var assembleOptions = options;
+
+  helpers.moment = function(context, block) {
     if (context && context.hash) {
       block = _.cloneDeep(context);
       context = undefined;
@@ -33,9 +35,9 @@ module.exports.register = function (Handlebars, options, params) {
       }
     }
     return date;
-  });
+  };
 
-  Handlebars.registerHelper('duration', function (context, block) {
+  helpers.duration = function(context, block) {
     if (context && context.hash) {
       block = _.cloneDeep(context);
       context = 0;
@@ -53,5 +55,10 @@ module.exports.register = function (Handlebars, options, params) {
       }
     }
     return duration;
-  });
+  };
+
+  for (var helper in helpers) {
+    Handlebars.registerHelper(helper, helpers[helper]);
+  }
+  return this;
 };
